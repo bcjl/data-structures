@@ -46,3 +46,7 @@ var Node = function(value){
 /*
  * Complexity: What is the time complexity of the above functions?
  */
+
+// addToTail method has constant time complexity O(1)
+// removeHead method has constant time complexity O(1)
+// contains is linear complexity O(n)
