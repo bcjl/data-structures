@@ -7,7 +7,7 @@ var Graph = function(){
 Graph.prototype.addNode = function(node){
   var newNode = {};
   newNode.val = node;
-  newNode.edges = [];
+  newNode.edges = {};
 
   this.storage[node] = newNode;
 };
@@ -30,27 +30,31 @@ Graph.prototype.removeNode = function(node){
   }
 };
 
-Graph.prototype.hasEdge = function(fromNode, toNode){
-  if(this.storage[fromNode].edges.indexOf(toNode) > -1 && this.storage[toNode].edges.indexOf(fromNode) > -1){
+Graph.prototype.hasEdge = function(fromNodeVal, toNodeVal){
+  var fromNode = this.storage[fromNodeVal];
+  var toNode = this.storage[toNodeVal];
+  if(fromNode.edges[toNodeVal] && toNode.edges[fromNodeVal]){
     return true;
   }
   return false;
 };
 
-Graph.prototype.addEdge = function(fromNode, toNode){
-  if(this.contains(fromNode) && this.contains(toNode)){
-    this.storage[fromNode].edges.push(toNode);
-    this.storage[toNode].edges.push(fromNode);
+Graph.prototype.addEdge = function(fromNodeVal, toNodeVal){
+  var fromNode = this.storage[fromNodeVal];
+  var toNode = this.storage[toNodeVal];
+
+  if(this.contains(fromNodeVal) && this.contains(toNodeVal)){
+    fromNode.edges[toNodeVal] = toNode;
+    toNode.edges[fromNodeVal] = fromNode;
   }
 };
 
-Graph.prototype.removeEdge = function(fromNode, toNode){
-  var toNodeEdgeRefIndex = this.storage[fromNode].edges.indexOf(toNode);
-  var fromNodeEdgeRefIndex = this.storage[toNode].edges.indexOf(fromNode);
+Graph.prototype.removeEdge = function(fromNodeVal, toNodeVal){
+  var fromNode = this.storage[fromNodeVal];
+  var toNode = this.storage[toNodeVal];
 
-  this.storage[fromNode].edges.splice(toNodeEdgeRefIndex, 1);
-  this.storage[toNode].edges.splice(fromNodeEdgeRefIndex, 1);
-
+  delete fromNode.edges[toNodeVal];
+  delete toNode.edges[fromNodeVal];
 };
 
 Graph.prototype.forEachNode = function(cb){
