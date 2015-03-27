@@ -13,30 +13,23 @@ Graph.prototype.addNode = function(node){
 };
 
 Graph.prototype.contains = function(node){
-  for(var key in this.storage){
-    if(this.storage[key].val === node){
-      return true;
-    }
-  }
-  return false;
+  // Valid values return truthy, invalid falsey, this casts to boolean
+  return !!this.storage[node];
 };
 
 Graph.prototype.removeNode = function(node){
-  for(var key in this.storage){
-    if(this.storage[key].val === node){
-      delete this.storage[key];
-      //Must add a check to see if any nodes are edge connected to it b4 delete
+  if(this.contains(node)){
+    for(var edge in this.storage[node].edges){
+      delete this.storage[edge].edges[node];
     }
+    delete this.storage[node];
   }
 };
 
 Graph.prototype.hasEdge = function(fromNodeVal, toNodeVal){
   var fromNode = this.storage[fromNodeVal];
-  var toNode = this.storage[toNodeVal];
-  if(fromNode.edges[toNodeVal] && toNode.edges[fromNodeVal]){
-    return true;
-  }
-  return false;
+  // After && operand: Valid values return truthy, invalid falsey, this casts to boolean
+  return this.contains(fromNodeVal) && !!fromNode.edges[toNodeVal];
 };
 
 Graph.prototype.addEdge = function(fromNodeVal, toNodeVal){
@@ -52,9 +45,10 @@ Graph.prototype.addEdge = function(fromNodeVal, toNodeVal){
 Graph.prototype.removeEdge = function(fromNodeVal, toNodeVal){
   var fromNode = this.storage[fromNodeVal];
   var toNode = this.storage[toNodeVal];
-
-  delete fromNode.edges[toNodeVal];
-  delete toNode.edges[fromNodeVal];
+  if(this.contains(fromNodeVal) && this.contains(toNodeVal)){
+    delete fromNode.edges[toNodeVal];
+    delete toNode.edges[fromNodeVal];
+  }
 };
 
 Graph.prototype.forEachNode = function(cb){
@@ -65,6 +59,13 @@ Graph.prototype.forEachNode = function(cb){
 
 /*
  * Complexity: What is the time complexity of the above functions?
+ * AddNode = constant O(1)
+ * Contains = constant O(1)
+ * removeNode = linear O(n)
+ * hasEdge = constant O(1)
+ * addEdge = constant O(1)
+ * removeEdge = constant O(1)
+ * forEachNode = linear O(n)
  */
 
 
