@@ -5,12 +5,22 @@ var HashTable = function(){
 
 HashTable.prototype.insert = function(key, value){
   var i = getIndexBelowMaxForKey(key, this._limit);
-  var bucket = !this._storage.get(i) ? [] : this._storage.get(i);
-  for(var j = 0; j < bucket.length; j++){
-    if(bucket[j][0] === key){
-      bucket[j][1] = value;
-    } else
+  var bucket;
+  var found = false;
+  if(!this._storage.get(i)){
+    bucket = [];
     bucket.push([key, value]);
+  } else {
+    bucket = this._storage.get(i);
+    for(var j = 0; j < bucket.length; j++){
+      if(bucket[j][0] === key){
+        bucket[j][1] = value;
+        found = true;
+      }
+    }
+    if(!found){
+      bucket.push([key, value]);
+    }
   }
   this._storage.set(i, bucket);
 };
